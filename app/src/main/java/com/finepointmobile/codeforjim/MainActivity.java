@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
         mUsername = (EditText) findViewById(R.id.username);
         email = (EditText) findViewById(R.id.email_validation);
 
+
+        // The String "Hello"
         Single first = Single.just("Hello");
 
         first.subscribe(new SingleObserver() {
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // 1 through 5
         Observable second = Observable.fromArray(1, 2, 3, 4, 5);
 
         second.subscribe(new Observer() {
@@ -83,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // 500 through 1000
         Observable third = Observable.create(new ObservableOnSubscribe() {
             @Override
             public void subscribe(@NonNull ObservableEmitter e) throws Exception {
@@ -115,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // EditText populated
         textChanges(mUsername)
                 .subscribe(new Observer<CharSequence>() {
                     @Override
@@ -138,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        // See if email address is valid.
+        // EditText email validation
         textChanges(email)
                 .subscribe(new Observer<CharSequence>() {
                     @Override
