@@ -9,10 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.EditText;
 
-import com.jakewharton.rxbinding2.InitialValueObservable;
-import com.jakewharton.rxbinding2.widget.RxTextView;
-import com.jakewharton.rxbinding2.widget.TextViewTextChangeEvent;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -119,53 +115,53 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        InitialValueObservable<CharSequence> fourth = textChanges(mUsername);
+        textChanges(mUsername)
+                .subscribe(new Observer<CharSequence>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
 
-        fourth.subscribe(new Observer<CharSequence>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
+                    }
 
-            }
+                    @Override
+                    public void onNext(@NonNull CharSequence charSequence) {
+                        Log.d(TAG, "onNext: " + charSequence);
+                    }
 
-            @Override
-            public void onNext(@NonNull CharSequence charSequence) {
-                Log.d(TAG, "onNext: " + charSequence);
-            }
+                    @Override
+                    public void onError(@NonNull Throwable e) {
 
-            @Override
-            public void onError(@NonNull Throwable e) {
+                    }
 
-            }
+                    @Override
+                    public void onComplete() {
 
-            @Override
-            public void onComplete() {
+                    }
+                });
 
-            }
-        });
+        // See if email address is valid.
+        textChanges(email)
+                .subscribe(new Observer<CharSequence>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
 
-        RxTextView.textChangeEvents(email).subscribe(new Observer<TextViewTextChangeEvent>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
+                    }
 
-            }
+                    @Override
+                    public void onNext(@NonNull CharSequence charSequence) {
+                        boolean value = validate(charSequence.toString());
+                        Log.d(TAG, "onNext: Is email valid? " + value);
+                    }
 
-            @Override
-            public void onNext(@NonNull TextViewTextChangeEvent textViewTextChangeEvent) {
-                String text = textViewTextChangeEvent.text().toString();
-                boolean value = validate(text);
-                Log.d(TAG, "onNext: Is email valid? " + value);
-            }
+                    @Override
+                    public void onError(@NonNull Throwable e) {
 
-            @Override
-            public void onError(@NonNull Throwable e) {
+                    }
 
-            }
+                    @Override
+                    public void onComplete() {
 
-            @Override
-            public void onComplete() {
-
-            }
-        });
+                    }
+                });
     }
 
     // from https://stackoverflow.com/questions/8204680/java-regex-email
