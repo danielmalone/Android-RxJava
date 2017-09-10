@@ -18,8 +18,10 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.jakewharton.rxbinding2.widget.RxTextView.textChanges;
 
@@ -42,17 +44,17 @@ public class MainActivity extends AppCompatActivity {
 
 
         // The String "Hello"
-        Single first = Single.just("Hello");
+        Single<String> first = Single.just("Hello");
 
-        first.subscribe(new SingleObserver() {
+        first.subscribe(new SingleObserver<String>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
                 Log.d(TAG, "onSubscribe: ");
             }
 
             @Override
-            public void onSuccess(@NonNull Object o) {
-                Log.d(TAG, "onSuccess: " + o);
+            public void onSuccess(@NonNull String s) {
+                Log.d(TAG, "onSuccess: " + s);
             }
 
             @Override
@@ -155,6 +157,43 @@ public class MainActivity extends AppCompatActivity {
                     public void onNext(@NonNull CharSequence charSequence) {
                         boolean value = validate(charSequence.toString());
                         Log.d(TAG, "onNext: Is email valid? " + value);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
+        Observable<Boolean> networkAvailability = Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<Boolean> e) throws Exception {
+                if (isNetworkAvailable()) {
+                    e.onNext(true);
+                } else {
+                    e.onNext(false);
+                }
+                e.onComplete();
+            }
+        });
+
+        networkAvailability.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Boolean>() {
+
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull Boolean aBoolean) {
+
                     }
 
                     @Override
