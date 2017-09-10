@@ -17,7 +17,9 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
 import io.reactivex.SingleObserver;
+import io.reactivex.SingleOnSubscribe;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 
@@ -168,41 +170,31 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        Observable<Boolean> networkAvailability = Observable.create(new ObservableOnSubscribe<Boolean>() {
+        Single.create(new SingleOnSubscribe<Boolean>() {
             @Override
-            public void subscribe(@NonNull ObservableEmitter<Boolean> e) throws Exception {
+            public void subscribe(@NonNull SingleEmitter<Boolean> e) throws Exception {
                 if (isNetworkAvailable()) {
-                    e.onNext(true);
+                    e.onSuccess(true);
                 } else {
-                    e.onNext(false);
+                    e.onError(new Throwable("Network not available!"));
                 }
-                e.onComplete();
+            }
+        }).subscribe(new SingleObserver<Boolean>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onSuccess(@NonNull Boolean aBoolean) {
+                Log.d(TAG, "onSuccess: network is available!");
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.d(TAG, "onError: error :(");
             }
         });
-
-        networkAvailability
-                .subscribe(new Observer<Boolean>() {
-
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                        Log.d(TAG, "onSubscribe: ");
-                    }
-
-                    @Override
-                    public void onNext(@NonNull Boolean aBoolean) {
-                        Log.d(TAG, "onNext: is internet available? " + aBoolean);
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        Log.d(TAG, "onError: internet: " + e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "onComplete: done looking for networks stuff.");
-                    }
-                });
     }
 
     // from https://stackoverflow.com/questions/8204680/java-regex-email
