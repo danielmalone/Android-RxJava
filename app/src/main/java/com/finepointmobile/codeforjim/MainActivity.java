@@ -18,10 +18,8 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 import static com.jakewharton.rxbinding2.widget.RxTextView.textChanges;
 
@@ -64,17 +62,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // 1 through 5
-        Observable second = Observable.fromArray(1, 2, 3, 4, 5);
+        Observable<Integer> second = Observable.fromArray(1, 2, 3, 4, 5);
 
-        second.subscribe(new Observer() {
+        second.subscribe(new Observer<Integer>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
                 Log.d(TAG, "onSubscribe: ");
             }
 
             @Override
-            public void onNext(@NonNull Object o) {
-                Log.d(TAG, "onNext: " + o);
+            public void onNext(@NonNull Integer integer) {
+                Log.d(TAG, "onNext: number is: " + integer);
             }
 
             @Override
@@ -89,9 +87,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // 500 through 1000
-        Observable third = Observable.create(new ObservableOnSubscribe() {
+        Observable<Integer> third = Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
-            public void subscribe(@NonNull ObservableEmitter e) throws Exception {
+            public void subscribe(@NonNull ObservableEmitter<Integer> e) throws Exception {
                 for (int i = 500; i <= 1000; i++) {
                     e.onNext(i);
                 }
@@ -99,15 +97,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        third.subscribe(new Observer() {
+        third.subscribe(new Observer<Integer>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
 
             }
 
             @Override
-            public void onNext(@NonNull Object o) {
-                Log.d(TAG, "onNext: " + o);
+            public void onNext(@NonNull Integer integer) {
+                Log.d(TAG, "onNext: " + integer);
             }
 
             @Override
@@ -182,28 +180,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        networkAvailability.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        networkAvailability
                 .subscribe(new Observer<Boolean>() {
 
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
-
+                        Log.d(TAG, "onSubscribe: ");
                     }
 
                     @Override
                     public void onNext(@NonNull Boolean aBoolean) {
-
+                        Log.d(TAG, "onNext: is internet available? " + aBoolean);
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-
+                        Log.d(TAG, "onError: internet: " + e);
                     }
 
                     @Override
                     public void onComplete() {
-
+                        Log.d(TAG, "onComplete: done looking for networks stuff.");
                     }
                 });
     }
