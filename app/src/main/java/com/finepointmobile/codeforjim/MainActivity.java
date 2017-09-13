@@ -6,6 +6,8 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
 
@@ -13,8 +15,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
@@ -89,15 +89,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // 500 through 1000
-        Observable<Integer> third = Observable.create(new ObservableOnSubscribe<Integer>() {
-            @Override
-            public void subscribe(@NonNull ObservableEmitter<Integer> e) throws Exception {
-                for (int i = 500; i <= 1000; i++) {
-                    e.onNext(i);
-                }
-                e.onComplete();
-            }
-        });
+        Observable<Integer> third = Observable.range(500, 501);
 
         third.subscribe(new Observer<Integer>() {
             @Override
@@ -107,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onNext(@NonNull Integer integer) {
-                Log.d(TAG, "onNext: " + integer);
+                Log.d(TAG, "onNext: Numbers: " + integer);
             }
 
             @Override
@@ -117,33 +109,26 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onComplete() {
-                Log.d(TAG, "onComplete: DONE! :)");
+
             }
         });
 
-        // EditText populated
-        textChanges(mUsername)
-                .subscribe(new Observer<CharSequence>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
+        mUsername.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                    }
+            }
 
-                    @Override
-                    public void onNext(@NonNull CharSequence charSequence) {
-                        Log.d(TAG, "onNext: " + charSequence);
-                    }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                    @Override
-                    public void onError(@NonNull Throwable e) {
+            }
 
-                    }
+            @Override
+            public void afterTextChanged(Editable editable) {
 
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+            }
+        });
 
         // EditText email validation
         textChanges(email)
